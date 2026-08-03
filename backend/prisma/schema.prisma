@@ -27,6 +27,7 @@ model Produto{
   fotos FotoProduto[]
   variacoes VariacaoProduto[]
   itensPedido ItemPedido[]
+  itensCarrinho ItemCarrinho[]
 }
 
 model FotoProduto{
@@ -46,7 +47,9 @@ model VariacaoProduto{
   produtoId Int
 
   produto Produto @relation(fields: [produtoId], references: [id] , onDelete: Cascade)
+
   itensPedido ItemPedido[]
+  itensCarrinho ItemCarrinho[]
 }
 
 model Categoria{
@@ -128,5 +131,20 @@ model Usuario{
   updatedAt DateTime @updatedAt
 
   pedidos Pedido[]
+  itensCarrinho ItemCarrinho[]
 }
 
+model ItemCarrinho{
+  id Int @id @default(autoincrement())
+  usuarioId Int
+  produtoId Int
+  variacaoProdutoId Int?
+  quantidade Int
+  createdAt DateTime @default(now())
+
+  usuario Usuario @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  produto Produto @relation(fields: [produtoId], references: [id], onDelete: Cascade)
+  variacaoProduto VariacaoProduto? @relation(fields: [variacaoProdutoId], references: [id], onDelete: Cascade)
+
+  @@unique([usuarioId, produtoId, variacaoProdutoId])
+}
