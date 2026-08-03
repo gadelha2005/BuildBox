@@ -21,6 +21,9 @@ model Produto{
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  categoria Categoria @relation(fields: [categoriaId], references: [id])
+  marca Marca @relation(fields: [marcaId], references: [id])
+
   fotos FotoProduto[]
   variacoes VariacaoProduto[]
 }
@@ -43,3 +46,22 @@ model VariacaoProduto{
 
   produto Produto @relation(fields: [produtoId], references: [id] , onDelete: Cascade)
 }
+
+model Categoria{
+  id Int @id @default(autoincrement())
+  nome String @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  produtos Produto []
+}
+
+model Marca{
+  id Int @id @default(autoincrement())
+  nome String @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  produtos Produto[]
+}
+
