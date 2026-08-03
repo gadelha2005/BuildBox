@@ -6,3 +6,40 @@ datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
 }
+
+model Produto{
+  id Int @id @default(autoincrement())
+  nome String
+  descricao String @db.Text
+  preco Decimal @db.Decimal(10, 2)
+  unidadeMedida String
+  categoriaId Int
+  marcaId Int
+  estoque Int @default(0)
+  estoqueMinimo Int @default(0)
+  ativo Boolean @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  fotos FotoProduto[]
+  variacoes VariacaoProduto[]
+}
+
+model FotoProduto{
+  id Int @id @default(autoincrement())
+  url String 
+  ordem Int @default(0)
+  produtoId Int
+
+  produto Produto @relation(fields: [produtoId], references: [id] , onDelete: Cascade)
+}
+
+model VariacaoProduto{
+  id Int @id @default(autoincrement())
+  tamanho String?
+  cor String?
+  estoque Int @default(0)
+  produtoId Int
+
+  produto Produto @relation(fields: [produtoId], references: [id] , onDelete: Cascade)
+}
