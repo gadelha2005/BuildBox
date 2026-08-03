@@ -28,6 +28,7 @@ model Produto{
   variacoes VariacaoProduto[]
   itensPedido ItemPedido[]
   itensCarrinho ItemCarrinho[]
+  movimentacoesEstoque MovimentacaoEstoque[]
 }
 
 model FotoProduto{
@@ -50,6 +51,7 @@ model VariacaoProduto{
 
   itensPedido ItemPedido[]
   itensCarrinho ItemCarrinho[]
+  movimentacoesEstoque MovimentacaoEstoque[]
 }
 
 model Categoria{
@@ -124,7 +126,9 @@ model Usuario{
   role RoleUsuario @default(CLIENTE)
   ativo Boolean @default(true)
   rua String?
+  numero String?
   complemento String?
+  cidade String?
   estado String?
   cep String?
   createdAt DateTime @default(now())
@@ -132,6 +136,7 @@ model Usuario{
 
   pedidos Pedido[]
   itensCarrinho ItemCarrinho[]
+  movimentacoesEstoque MovimentacaoEstoque[]
 }
 
 model ItemCarrinho{
@@ -147,4 +152,24 @@ model ItemCarrinho{
   variacaoProduto VariacaoProduto? @relation(fields: [variacaoProdutoId], references: [id], onDelete: Cascade)
 
   @@unique([usuarioId, produtoId, variacaoProdutoId])
+}
+
+enum TipoMovimentacao{
+  ENTRADA
+  SAIDA
+}
+
+model MovimentacaoEstoque{
+  id Int @id @default(autoincrement())
+  produtoId Int
+  variacaoProdutoId Int?
+  usuarioId Int
+  tipo TipoMovimentacao
+  quantidade Int
+  motivo String?
+  createdAt DateTime @default(now())
+
+  produto Produto @relation(fields: [produtoId], references: [id])
+   variacaoProduto VariacaoProduto? @relation(fields: [variacaoProdutoId], references: [id])
+   usuario Usuario @relation(fields: [usuarioId], references: [id])
 }
