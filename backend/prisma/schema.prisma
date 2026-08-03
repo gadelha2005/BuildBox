@@ -26,6 +26,7 @@ model Produto{
 
   fotos FotoProduto[]
   variacoes VariacaoProduto[]
+  itensPedido ItemPedido[]
 }
 
 model FotoProduto{
@@ -45,6 +46,7 @@ model VariacaoProduto{
   produtoId Int
 
   produto Produto @relation(fields: [produtoId], references: [id] , onDelete: Cascade)
+  itensPedido ItemPedido[]
 }
 
 model Categoria{
@@ -53,7 +55,7 @@ model Categoria{
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  produtos Produto []
+  produtos Produto[]
 }
 
 model Marca{
@@ -65,3 +67,39 @@ model Marca{
   produtos Produto[]
 }
 
+enum StatusPedido{
+  EM_SEPARACAO
+  ENVIADO
+  ENTREGUE
+  CANCELADO
+}
+
+model Pedido{
+  id Int @id @default(autoincrement())
+  usuarioId Int 
+  status StatusPedido @default(EM_SEPARACAO)
+  total Decimal @db.Decimal(10, 2)
+  rua String
+  numero String
+  complemento String?
+  cidade String
+  estado String
+  cep String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  itens ItemPedido[]
+}
+
+model ItemPedido{
+  id Int @id @default(autoincrement())
+  pedidoId Int
+  produtoId Int
+  variacaoProdutoId Int?
+  quantidade Int
+  precoUnitario Decimal @db.Decimal(10 , 2)
+
+  pedido Pedido @relation(fields: [pedidoId], references: [id], onDelete: Cascade)
+  produto Produto @relation(fields: [produtoId], references: [id])
+  variacaoProduto VariacaoProduto? @relation(fields: [variacaoProdutoId], references: [id])
+}
