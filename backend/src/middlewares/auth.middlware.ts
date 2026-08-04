@@ -14,7 +14,7 @@ export function authMiddleware(request: Request, response: Response, next: NextF
         throw new AppError('Token não fornecido' , 401);
     }
 
-    const [, token] = authHeader.split('');
+    const [, token] = authHeader.split(' ');
 
     const payload = jwt.verify(token, process.env.JWT_SECRET!) as TokenPayload;
 
