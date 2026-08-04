@@ -9,6 +9,11 @@ const registerSchema = z.object({
     password: z.string().min(6, "A senha deve ter no mínimo 6 caracteres")
 });
 
+const loginSchema = z.object({
+  email: z.string().email('Formato inválido de email'),
+  password: z.string().min(1, 'A senha é obrigatória'),
+});
+
 export async function register(request: Request, response: Response, next: NextFunction){
     const {name, email, password} = registerSchema.parse(request.body);
     const user = await authService.register(name, email, password);
@@ -16,5 +21,10 @@ export async function register(request: Request, response: Response, next: NextF
     return response.status(201).json(user);
 }
 
+export async function login(request: Request, response: Response, next: NextFunction){
+    const {email, password} = loginSchema.parse(request.body);
+    const user = await authService.login(email, password);
 
+    return response.status(200).json(user);
+}
 
