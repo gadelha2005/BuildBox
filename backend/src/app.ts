@@ -6,6 +6,7 @@ import { JsonWebTokenError, TokenExpiredError } from 'jsonwebtoken';
 import { AppError } from './errors/app-error';
 import authRoutes from './routes/auth.route';
 import { authMiddleware } from './middlewares/auth.middlware';
+import {requireRole} from './middlewares/role.middleware';
 
 const app = express();
 
@@ -20,6 +21,11 @@ app.get('/health', (request: Request, response: Response) => {
 
 app.get('/me', authMiddleware, (request: Request, response: Response) => {
   response.json({ user: request.user });
+});
+
+app.get('/admin-only' , authMiddleware, requireRole('ADMIN'), 
+    (request: Request, response: Response) => {
+        response.json({message: "Acesso Liberado!"});
 });
 
 app.use((error: Error, request: Request, response: Response, next: NextFunction) => {
