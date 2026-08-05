@@ -6,6 +6,7 @@ import { JsonWebTokenError, TokenExpiredError } from 'jsonwebtoken';
 import { AppError } from './errors/app-error';
 import authRoutes from './routes/auth.route';
 import categoryRoutes from './routes/category.route';
+import brandRoutes from './routes/brand.route';
 import { authMiddleware } from './middlewares/auth.middlware';
 import {requireRole} from './middlewares/role.middleware';
 
@@ -16,6 +17,7 @@ app.use(cors());
 
 app.use('/auth' , authRoutes);
 app.use('/categories' , categoryRoutes);
+app.use('/brands' , brandRoutes);
 
 app.get('/health', (request: Request, response: Response) => {
   response.json({ status: 'ok' });
