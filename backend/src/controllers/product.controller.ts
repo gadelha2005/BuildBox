@@ -13,6 +13,17 @@ const createProductSchema = z.object({
   minStock: z.number().int().min(0).optional(),
 });
 
+const findAllQuerySchema = z.object({
+  search: z.string().optional(),
+  categoryId: z.coerce.number().int().positive().optional(),
+  brandId: z.coerce.number().int().positive().optional(),
+  minPrice: z.coerce.number().positive().optional(),
+  maxPrice: z.coerce.number().positive().optional(),
+  sort: z.enum(['price_asc', 'price_desc']).optional(),
+  page: z.coerce.number().int().positive().optional(),
+  limit: z.coerce.number().int().positive().optional(),
+});
+
 const updateProductSchema = createProductSchema.partial();
 
 export async function create(request: Request, response: Response, next: NextFunction){
@@ -22,10 +33,11 @@ export async function create(request: Request, response: Response, next: NextFun
     return response.status(201).json(product);
 }
 
-export async function findAll(request: Request, response: Response, next: NextFunction){
-    const products = await productService.findAll();
-
-    return response.status(200).json(products);
+export async function findAll(request: Request, response: Response) {
+  const filters = findAllQuerySchema.parse(request.query);
+  const result = await productService.findAll(filters);
+  
+  return response.status(200).json(result);
 }
 
 export async function findById(request: Request, response: Response, next: NextFunction){
