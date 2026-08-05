@@ -47,3 +47,14 @@ export interface FindAllFilters {
   page?: number;
   limit?: number;
 }
+
+export interface ProductPhoto {
+  id: number;
+  url: string;
+  ordem: number;
+  produtoId: number;
+}
+
+export interface ProductWithPhotos extends Product {
+  fotos: ProductPhoto[];
+}
