@@ -2,6 +2,7 @@ import { Router } from "express";
 import * as productController from '../controllers/product.controller';
 import { authMiddleware } from "../middlewares/auth.middlware";
 import { requireRole } from "../middlewares/role.middleware";
+import * as photoController from '../controllers/photo.controller';
 
 
 const router = Router();
@@ -12,5 +13,7 @@ router.post('/', authMiddleware, requireRole('ADMIN'), productController.create)
 router.put('/:id', authMiddleware, requireRole('ADMIN'), productController.update);
 router.patch('/:id/deactivate', authMiddleware, requireRole('ADMIN'), productController.deactivate);
 router.delete('/:id', authMiddleware, requireRole('ADMIN'), productController.remove);
+router.post('/:id/photos', authMiddleware, requireRole('ADMIN'), photoController.add);
+router.delete('/:id/photos/:photoId', authMiddleware, requireRole('ADMIN'), photoController.remove);
 
 export default router;
