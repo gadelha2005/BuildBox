@@ -2,6 +2,7 @@ import {prisma} from '../lib/prisma';
 import { AppError } from '../errors/app-error';
 import { Product, CreateProductInput , UpdateProductInput , FindAllFilters } from '../types/product';
 import { Prisma } from '@prisma/client';
+import { ProductWithPhotos } from '../types/product';
 
 export async function create(data: CreateProductInput): Promise<Product>{
     const category = await prisma.categoria.findUnique({where: {id: data.categoryId}});
@@ -67,14 +68,17 @@ export async function findAll(filters: FindAllFilters) {
   return { products, total, page, limit };
 }
 
-export async function findById(id: number): Promise<Product>{
-    const product = await prisma.produto.findUnique({where: {id}});
+export async function findById(id: number): Promise<ProductWithPhotos> {
+  const product = await prisma.produto.findUnique({
+    where: { id },
+    include: { fotos: { orderBy: { ordem: 'asc' } } },
+  });
 
-    if(!product){
-        throw new AppError('Produto não encontrado' , 404);
-    }
+  if (!product) {
+    throw new AppError('Product not found', 404);
+  }
 
-    return product;
+  return product;
 }
 
 export async function update(id: number, data: UpdateProductInput): Promise<Product>{
