@@ -36,3 +36,14 @@ export interface UpdateProductInput {
   stock?: number;
   minStock?: number;
 }
+
+export interface FindAllFilters {
+  search?: string;
+  categoryId?: number;
+  brandId?: number;
+  minPrice?: number;
+  maxPrice?: number;
+  sort?: 'price_asc' | 'price_desc';
+  page?: number;
+  limit?: number;
+}
