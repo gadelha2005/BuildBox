@@ -5,6 +5,7 @@ import { ZodError } from 'zod';
 import { JsonWebTokenError, TokenExpiredError } from 'jsonwebtoken';
 import { AppError } from './errors/app-error';
 import authRoutes from './routes/auth.route';
+import categoryRoutes from './routes/category.route';
 import { authMiddleware } from './middlewares/auth.middlware';
 import {requireRole} from './middlewares/role.middleware';
 
@@ -14,6 +15,7 @@ app.use(express.json());
 app.use(cors());
 
 app.use('/auth' , authRoutes);
+app.use('/categories' , categoryRoutes);
 
 app.get('/health', (request: Request, response: Response) => {
   response.json({ status: 'ok' });
