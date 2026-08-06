@@ -12,6 +12,7 @@ import cartRoutes from './routes/cart.route';
 import orderRoutes from './routes/order.route';
 import addressRoutes from './routes/address.route';
 import stockRoutes from './routes/stock.route';
+import userRoutes from './routes/user.route';
 import { authMiddleware } from './middlewares/auth.middlware';
 import {requireRole} from './middlewares/role.middleware';
 
@@ -28,6 +29,7 @@ app.use('/cart', cartRoutes);
 app.use('/orders', orderRoutes);
 app.use('/addresses', addressRoutes);
 app.use('/stock', stockRoutes);
+app.use('/users', userRoutes);
 
 app.get('/health', (request: Request, response: Response) => {
   response.json({ status: 'ok' });
