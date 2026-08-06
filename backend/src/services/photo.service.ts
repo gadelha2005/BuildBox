@@ -1,12 +1,6 @@
 import { prisma } from '../lib/prisma';
 import { AppError } from '../errors/app-error';
-import { ProductPhoto } from '../types/product';
-
-interface AddPhotoInput {
-  productId: number;
-  url: string;
-  order?: number;
-}
+import { AddPhotoInput, ProductPhoto } from '../types/product';
 
 export async function add(data: AddPhotoInput): Promise<ProductPhoto> {
   const product = await prisma.produto.findUnique({ where: { id: data.productId } });
