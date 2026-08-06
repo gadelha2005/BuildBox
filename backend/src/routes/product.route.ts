@@ -3,6 +3,7 @@ import * as productController from '../controllers/product.controller';
 import { authMiddleware } from "../middlewares/auth.middlware";
 import { requireRole } from "../middlewares/role.middleware";
 import * as photoController from '../controllers/photo.controller';
+import * as variantController from '../controllers/variant.controller';
 
 
 const router = Router();
@@ -15,5 +16,6 @@ router.patch('/:id/deactivate', authMiddleware, requireRole('ADMIN'), productCon
 router.delete('/:id', authMiddleware, requireRole('ADMIN'), productController.remove);
 router.post('/:id/photos', authMiddleware, requireRole('ADMIN'), photoController.add);
 router.delete('/:id/photos/:photoId', authMiddleware, requireRole('ADMIN'), photoController.remove);
+router.post('/:id/variants', authMiddleware, requireRole('ADMIN'), variantController.add);
 
 export default router;
