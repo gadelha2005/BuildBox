@@ -1,6 +1,6 @@
 import { AppError } from "../errors/app-error";
 import { prisma } from "../lib/prisma";
-import { Brand } from "../types/Brand";
+import { Brand } from "../types/brand";
 
 export async function create(name: string): Promise<Brand> {
     const existingBrand = await prisma.marca.findUnique({ where: { nome: name } });
