@@ -1,13 +1,6 @@
 import {prisma} from '../lib/prisma';
 import { AppError } from '../errors/app-error';
-import { ProductVariant } from '../types/product';
-
-interface AddVariantInput{
-    productId: number;
-    size?: string;
-    color?: string;
-    stock: number;
-}
+import { ProductVariant, AddVariantInput } from '../types/product';
 
 export async function add(data: AddVariantInput): Promise<ProductVariant>{
     const product = await prisma.produto.findUnique({where: {id: data.productId}});
