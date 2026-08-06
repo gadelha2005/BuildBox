@@ -13,6 +13,7 @@ import orderRoutes from './routes/order.route';
 import addressRoutes from './routes/address.route';
 import stockRoutes from './routes/stock.route';
 import userRoutes from './routes/user.route';
+import reportRoutes from './routes/report.route';
 import { authMiddleware } from './middlewares/auth.middlware';
 import {requireRole} from './middlewares/role.middleware';
 
@@ -30,6 +31,7 @@ app.use('/orders', orderRoutes);
 app.use('/addresses', addressRoutes);
 app.use('/stock', stockRoutes);
 app.use('/users', userRoutes);
+app.use('/reports', reportRoutes);
 
 app.get('/health', (request: Request, response: Response) => {
   response.json({ status: 'ok' });
