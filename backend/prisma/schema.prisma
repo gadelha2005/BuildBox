@@ -125,18 +125,14 @@ model Usuario{
   senha String
   role RoleUsuario @default(CLIENTE)
   ativo Boolean @default(true)
-  rua String?
-  numero String?
-  complemento String?
-  cidade String?
-  estado String?
-  cep String?
+  
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   pedidos Pedido[]
   itensCarrinho ItemCarrinho[]
   movimentacoesEstoque MovimentacaoEstoque[]
+  enderecos Endereco[]
 }
 
 model ItemCarrinho{
@@ -172,4 +168,19 @@ model MovimentacaoEstoque{
   produto Produto @relation(fields: [produtoId], references: [id])
    variacaoProduto VariacaoProduto? @relation(fields: [variacaoProdutoId], references: [id])
    usuario Usuario @relation(fields: [usuarioId], references: [id])
+}
+
+model Endereco {
+  id Int @id @default(autoincrement())
+  usuarioId Int
+  rua String
+  numero String
+  complemento String?
+  cidade String
+  estado String
+  cep String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  usuario Usuario @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
 }
