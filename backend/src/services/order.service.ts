@@ -79,3 +79,24 @@ export async function checkout(userId: number, addressId: number) {
 
   return order;
 }
+
+export async function findMine(userId: number){
+  return prisma.pedido.findMany({
+    where: {usuarioId: userId},
+    include: {itens: {include: {produto: true, variacaoProduto:true}}},
+    orderBy: {createdAt: 'desc'}
+  });
+}
+
+export async function findMineById(userId: number, orderId: number) {
+  const order = await prisma.pedido.findUnique({
+    where: { id: orderId },
+    include: { itens: {include:{produto: true, variacaoProduto: true}}},
+  });
+
+  if (!order || order.usuarioId !== userId) {
+    throw new AppError('Pedido não encontrado', 404);
+  }
+
+  return order;
+}
