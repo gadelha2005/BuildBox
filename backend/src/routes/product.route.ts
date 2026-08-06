@@ -10,12 +10,15 @@ const router = Router();
 
 router.get('/', productController.findAll);
 router.get('/:id', productController.findById);
-router.post('/', authMiddleware, requireRole('ADMIN'), productController.create);
-router.put('/:id', authMiddleware, requireRole('ADMIN'), productController.update);
-router.patch('/:id/deactivate', authMiddleware, requireRole('ADMIN'), productController.deactivate);
-router.delete('/:id', authMiddleware, requireRole('ADMIN'), productController.remove);
-router.post('/:id/photos', authMiddleware, requireRole('ADMIN'), photoController.add);
-router.delete('/:id/photos/:photoId', authMiddleware, requireRole('ADMIN'), photoController.remove);
-router.post('/:id/variants', authMiddleware, requireRole('ADMIN'), variantController.add);
+
+router.use(authMiddleware, requireRole('ADMIN'));
+
+router.post('/', productController.create);
+router.put('/:id', productController.update);
+router.patch('/:id/deactivate', productController.deactivate);
+router.delete('/:id', productController.remove);
+router.post('/:id/photos', photoController.add);
+router.delete('/:id/photos/:photoId', photoController.remove);
+router.post('/:id/variants', variantController.add);
 
 export default router;
