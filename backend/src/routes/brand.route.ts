@@ -6,8 +6,11 @@ import { requireRole } from "../middlewares/role.middleware";
 const router = Router();
 
 router.get('/', brandController.findAll);
-router.post('/', authMiddleware, requireRole('ADMIN'), brandController.create);
-router.put('/:id', authMiddleware, requireRole('ADMIN'), brandController.update);
-router.delete('/:id', authMiddleware, requireRole('ADMIN'), brandController.remove);
+
+router.use(authMiddleware, requireRole('ADMIN'));
+
+router.post('/', brandController.create);
+router.put('/:id', brandController.update);
+router.delete('/:id', brandController.remove);
 
 export default router;
