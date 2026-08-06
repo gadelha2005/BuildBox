@@ -54,7 +54,15 @@ export interface ProductPhoto {
   ordem: number;
   produtoId: number;
 }
-
 export interface ProductWithPhotos extends Product {
   fotos: ProductPhoto[];
+  variacoes: ProductVariant[];
+}
+
+export interface ProductVariant {
+  id: number;
+  tamanho: string | null;
+  cor: string | null;
+  estoque: number;
+  produtoId: number;
 }
