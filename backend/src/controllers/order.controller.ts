@@ -13,3 +13,18 @@ export async function checkout(request: Request, response: Response) {
 
   return response.status(201).json(order);
 }
+
+export async function findMine(request: Request, response: Response) {
+  const userId = request.user!.userId;
+  const orders = await orderService.findMine(userId);
+
+  return response.status(200).json(orders);
+}
+
+export async function findMineById(request: Request, response: Response) {
+  const userId = request.user!.userId;
+  const orderId = Number(request.params.id);
+  const order = await orderService.findMineById(userId, orderId);
+
+  return response.status(200).json(order);
+}
