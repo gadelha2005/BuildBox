@@ -54,6 +54,12 @@ export interface ProductPhoto {
   ordem: number;
   produtoId: number;
 }
+
+export interface AddPhotoInput {
+  productId: number;
+  url: string;
+  order?: number;
+}
 export interface ProductWithPhotos extends Product {
   fotos: ProductPhoto[];
   variacoes: ProductVariant[];
@@ -65,4 +71,11 @@ export interface ProductVariant {
   cor: string | null;
   estoque: number;
   produtoId: number;
+}
+
+export interface AddVariantInput{
+    productId: number;
+    size?: string;
+    color?: string;
+    stock: number;
 }
