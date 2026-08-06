@@ -71,7 +71,10 @@ export async function findAll(filters: FindAllFilters) {
 export async function findById(id: number): Promise<ProductWithPhotos> {
   const product = await prisma.produto.findUnique({
     where: { id },
-    include: { fotos: { orderBy: { ordem: 'asc' } } },
+    include: {
+      fotos: { orderBy: { ordem: 'asc' } },
+      variacoes: true,
+    },
   });
 
   if (!product) {
