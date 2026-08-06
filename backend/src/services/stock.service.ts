@@ -83,3 +83,13 @@ async function registerMovement(type: 'ENTRADA' | 'SAIDA', data: StockMovementIn
   });
 }
 
+export async function listMovements() {
+  return prisma.movimentacaoEstoque.findMany({
+    include: {
+      produto: true,
+      variacaoProduto: true,
+      usuario: { select: { id: true, nome: true } },
+    },
+    orderBy: { createdAt: 'desc' },
+  });
+}

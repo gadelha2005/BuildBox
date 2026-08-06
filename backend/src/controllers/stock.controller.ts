@@ -32,3 +32,8 @@ export async function registerExit(request: Request, response: Response, next: N
     return response.status(201).json(movement);
 }
 
+export async function listMovements(request: Request, response: Response , next: NextFunction) {
+  const movements = await stockService.listMovements();
+
+  return response.status(200).json(movements);
+}
