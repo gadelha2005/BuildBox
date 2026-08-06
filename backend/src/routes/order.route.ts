@@ -7,5 +7,7 @@ const router = Router();
 router.use(authMiddleware);
 
 router.post('/', orderController.checkout);
+router.get('/me', orderController.findMine);
+router.get('/me/:id', orderController.findMineById);
 
 export default router;
