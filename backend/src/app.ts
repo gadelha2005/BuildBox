@@ -14,10 +14,20 @@ import addressRoutes from './routes/address.route';
 import stockRoutes from './routes/stock.route';
 import userRoutes from './routes/user.route';
 import reportRoutes from './routes/report.route';
+import swaggerUi from 'swagger-ui-express';
+import { parse } from 'yaml';
+import fs from 'fs';
+import path from 'path';
 import { authMiddleware } from './middlewares/auth.middlware';
 import {requireRole} from './middlewares/role.middleware';
 
 const app = express();
+
+const openapiDocument = parse(
+  fs.readFileSync(path.join(__dirname, 'docs', 'openapi.yaml'), 'utf8')
+);
+
+app.use('/docs', swaggerUi.serve, swaggerUi.setup(openapiDocument));
 
 app.use(express.json());
 app.use(cors());
