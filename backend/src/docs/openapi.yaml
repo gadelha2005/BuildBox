@@ -1,0 +1,948 @@
+openapi: 3.0.3
+info:
+  title: BuildBox API
+  description: API de e-commerce para loja de ferragens (elétrica, hidráulica, ferramentas e tintas).
+  version: 1.0.0
+servers:
+  - url: http://localhost:3000
+    description: Ambiente local
+
+tags:
+  - name: Auth
+  - name: Categories
+  - name: Brands
+  - name: Products
+  - name: Cart
+  - name: Addresses
+  - name: Orders
+  - name: Stock
+  - name: Reports
+  - name: Users
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    ErrorResponse:
+      type: object
+      properties:
+        message:
+          type: string
+
+    User:
+      type: object
+      properties:
+        id: { type: integer }
+        nome: { type: string }
+        email: { type: string }
+        role: { type: string, enum: [CLIENTE, FUNCIONARIO, ADMIN] }
+        ativo: { type: boolean }
+        createdAt: { type: string, format: date-time }
+
+    Category:
+      type: object
+      properties:
+        id: { type: integer }
+        nome: { type: string }
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+
+    Brand:
+      type: object
+      properties:
+        id: { type: integer }
+        nome: { type: string }
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+
+    Product:
+      type: object
+      properties:
+        id: { type: integer }
+        nome: { type: string }
+        descricao: { type: string }
+        preco: { type: string, example: "279.90" }
+        unidadeMedida: { type: string }
+        categoriaId: { type: integer }
+        marcaId: { type: integer }
+        estoque: { type: integer }
+        estoqueMinimo: { type: integer }
+        ativo: { type: boolean }
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+
+    ProductWithDetails:
+      allOf:
+        - $ref: '#/components/schemas/Product'
+        - type: object
+          properties:
+            fotos:
+              type: array
+              items:
+                type: object
+                properties:
+                  id: { type: integer }
+                  url: { type: string }
+                  ordem: { type: integer }
+                  produtoId: { type: integer }
+            variacoes:
+              type: array
+              items:
+                type: object
+                properties:
+                  id: { type: integer }
+                  tamanho: { type: string, nullable: true }
+                  cor: { type: string, nullable: true }
+                  estoque: { type: integer }
+                  produtoId: { type: integer }
+
+    CartItem:
+      type: object
+      properties:
+        id: { type: integer }
+        userId: { type: integer }
+        productId: { type: integer }
+        variantProductId: { type: integer, nullable: true }
+        quantity: { type: integer }
+        createdAt: { type: string, format: date-time }
+
+    Address:
+      type: object
+      properties:
+        id: { type: integer }
+        userId: { type: integer }
+        street: { type: string }
+        number: { type: string }
+        complement: { type: string, nullable: true }
+        city: { type: string }
+        state: { type: string }
+        zipCode: { type: string }
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+
+    Order:
+      type: object
+      properties:
+        id: { type: integer }
+        usuarioId: { type: integer }
+        status: { type: string, enum: [EM_SEPARACAO, ENVIADO, ENTREGUE, CANCELADO] }
+        total: { type: string, example: "559.80" }
+        rua: { type: string }
+        numero: { type: string }
+        complemento: { type: string, nullable: true }
+        cidade: { type: string }
+        estado: { type: string }
+        cep: { type: string }
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+        itens:
+          type: array
+          items:
+            type: object
+            properties:
+              id: { type: integer }
+              pedidoId: { type: integer }
+              produtoId: { type: integer }
+              variacaoProdutoId: { type: integer, nullable: true }
+              quantidade: { type: integer }
+              precoUnitario: { type: string }
+
+  responses:
+    Unauthorized:
+      description: Token não fornecido, inválido ou expirado
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/ErrorResponse' }
+    Forbidden:
+      description: Usuário autenticado, mas sem permissão (role incorreta)
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/ErrorResponse' }
+    NotFound:
+      description: Recurso não encontrado
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/ErrorResponse' }
+    ValidationError:
+      description: Dados inválidos (erro de validação do Zod)
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message: { type: string }
+              issues: { type: array, items: { type: object } }
+
+paths:
+  /auth/register:
+    post:
+      tags: [Auth]
+      summary: Cadastrar novo usuário (role CLIENTE)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, email, password]
+              properties:
+                name: { type: string }
+                email: { type: string }
+                password: { type: string, minLength: 6 }
+      responses:
+        '201':
+          description: Usuário criado
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/User' }
+        '400': { $ref: '#/components/responses/ValidationError' }
+        '409': { description: E-mail já cadastrado }
+
+  /auth/login:
+    post:
+      tags: [Auth]
+      summary: Login e obtenção do token JWT
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email: { type: string }
+                password: { type: string }
+      responses:
+        '200':
+          description: Login efetuado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token: { type: string }
+                  user: { $ref: '#/components/schemas/User' }
+        '401': { description: Credenciais inválidas }
+        '403': { description: Usuário desativado }
+
+  /categories:
+    get:
+      tags: [Categories]
+      summary: Listar categorias
+      responses:
+        '200':
+          description: Lista de categorias
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Category' }
+    post:
+      tags: [Categories]
+      summary: Criar categoria (ADMIN)
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name]
+              properties:
+                name: { type: string }
+      responses:
+        '201':
+          description: Categoria criada
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Category' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '409': { description: Categoria já existente }
+
+  /categories/{id}:
+    put:
+      tags: [Categories]
+      summary: Editar categoria (ADMIN)
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name]
+              properties:
+                name: { type: string }
+      responses:
+        '200':
+          description: Categoria atualizada
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Category' }
+        '404': { $ref: '#/components/responses/NotFound' }
+    delete:
+      tags: [Categories]
+      summary: Excluir categoria (ADMIN)
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+      responses:
+        '204': { description: Categoria excluída }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /brands:
+    get:
+      tags: [Brands]
+      summary: Listar marcas
+      responses:
+        '200':
+          description: Lista de marcas
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Brand' }
+    post:
+      tags: [Brands]
+      summary: Criar marca (ADMIN)
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name]
+              properties:
+                name: { type: string }
+      responses:
+        '201':
+          description: Marca criada
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Brand' }
+        '409': { description: Marca já existente }
+
+  /brands/{id}:
+    put:
+      tags: [Brands]
+      summary: Editar marca (ADMIN)
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name]
+              properties:
+                name: { type: string }
+      responses:
+        '200':
+          description: Marca atualizada
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Brand' }
+    delete:
+      tags: [Brands]
+      summary: Excluir marca (ADMIN)
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+      responses:
+        '204': { description: Marca excluída }
+
+  /products:
+    get:
+      tags: [Products]
+      summary: Listar produtos (com filtro, busca, ordenação e paginação)
+      parameters:
+        - { name: search, in: query, schema: { type: string } }
+        - { name: categoryId, in: query, schema: { type: integer } }
+        - { name: brandId, in: query, schema: { type: integer } }
+        - { name: minPrice, in: query, schema: { type: number } }
+        - { name: maxPrice, in: query, schema: { type: number } }
+        - { name: sort, in: query, schema: { type: string, enum: [price_asc, price_desc] } }
+        - { name: page, in: query, schema: { type: integer, default: 1 } }
+        - { name: limit, in: query, schema: { type: integer, default: 10 } }
+      responses:
+        '200':
+          description: Lista paginada de produtos ativos
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  products:
+                    type: array
+                    items: { $ref: '#/components/schemas/Product' }
+                  total: { type: integer }
+                  page: { type: integer }
+                  limit: { type: integer }
+    post:
+      tags: [Products]
+      summary: Criar produto (ADMIN)
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, description, price, unit, categoryId, brandId]
+              properties:
+                name: { type: string }
+                description: { type: string }
+                price: { type: number }
+                unit: { type: string }
+                categoryId: { type: integer }
+                brandId: { type: integer }
+                stock: { type: integer }
+                minStock: { type: integer }
+      responses:
+        '201':
+          description: Produto criado
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Product' }
+        '404': { description: Categoria ou marca não encontrada }
+
+  /products/{id}:
+    get:
+      tags: [Products]
+      summary: Detalhe do produto (com fotos e variações)
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+      responses:
+        '200':
+          description: Produto encontrado
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ProductWithDetails' }
+        '404': { $ref: '#/components/responses/NotFound' }
+    put:
+      tags: [Products]
+      summary: Editar produto (ADMIN, campos parciais)
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name: { type: string }
+                description: { type: string }
+                price: { type: number }
+                unit: { type: string }
+                categoryId: { type: integer }
+                brandId: { type: integer }
+                stock: { type: integer }
+                minStock: { type: integer }
+      responses:
+        '200':
+          description: Produto atualizado
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Product' }
+    delete:
+      tags: [Products]
+      summary: Excluir produto (ADMIN, falha se já tiver pedidos vinculados)
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+      responses:
+        '204': { description: Produto excluído }
+
+  /products/{id}/deactivate:
+    patch:
+      tags: [Products]
+      summary: Inativar produto (ADMIN, soft delete)
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+      responses:
+        '200':
+          description: Produto inativado
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Product' }
+
+  /products/{id}/photos:
+    post:
+      tags: [Products]
+      summary: Adicionar foto ao produto (ADMIN)
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [url]
+              properties:
+                url: { type: string, format: uri }
+                order: { type: integer }
+      responses:
+        '201': { description: Foto adicionada }
+
+  /products/{id}/photos/{photoId}:
+    delete:
+      tags: [Products]
+      summary: Remover foto do produto (ADMIN)
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+        - { name: photoId, in: path, required: true, schema: { type: integer } }
+      responses:
+        '204': { description: Foto removida }
+
+  /products/{id}/variants:
+    post:
+      tags: [Products]
+      summary: Adicionar variação ao produto (ADMIN)
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [stock]
+              properties:
+                size: { type: string }
+                color: { type: string }
+                stock: { type: integer }
+      responses:
+        '201': { description: Variação criada }
+
+  /cart:
+    get:
+      tags: [Cart]
+      summary: Ver meu carrinho
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200':
+          description: Itens do carrinho e total
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items: { $ref: '#/components/schemas/CartItem' }
+                  total: { type: number }
+    post:
+      tags: [Cart]
+      summary: Adicionar produto ao carrinho
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [productId, quantity]
+              properties:
+                productId: { type: integer }
+                variantId: { type: integer }
+                quantity: { type: integer }
+      responses:
+        '201':
+          description: Item adicionado/atualizado no carrinho
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/CartItem' }
+        '400': { description: Produto requer seleção de variação }
+        '409': { description: Estoque insuficiente ou produto esgotado }
+
+  /cart/{id}:
+    patch:
+      tags: [Cart]
+      summary: Atualizar quantidade de um item do carrinho
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [quantity]
+              properties:
+                quantity: { type: integer }
+      responses:
+        '200':
+          description: Item atualizado
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/CartItem' }
+    delete:
+      tags: [Cart]
+      summary: Remover item do carrinho
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+      responses:
+        '204': { description: Item removido }
+
+  /addresses:
+    get:
+      tags: [Addresses]
+      summary: Listar meus endereços
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200':
+          description: Lista de endereços
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Address' }
+    post:
+      tags: [Addresses]
+      summary: Cadastrar novo endereço
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [street, number, city, state, zipCode]
+              properties:
+                street: { type: string }
+                number: { type: string }
+                complement: { type: string }
+                city: { type: string }
+                state: { type: string }
+                zipCode: { type: string }
+      responses:
+        '201':
+          description: Endereço criado
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Address' }
+
+  /addresses/{id}:
+    put:
+      tags: [Addresses]
+      summary: Editar endereço (campos parciais)
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                street: { type: string }
+                number: { type: string }
+                complement: { type: string }
+                city: { type: string }
+                state: { type: string }
+                zipCode: { type: string }
+      responses:
+        '200':
+          description: Endereço atualizado
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Address' }
+    delete:
+      tags: [Addresses]
+      summary: Excluir endereço
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+      responses:
+        '204': { description: Endereço excluído }
+
+  /orders:
+    post:
+      tags: [Orders]
+      summary: Finalizar compra (checkout a partir do carrinho)
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [addressId]
+              properties:
+                addressId: { type: integer }
+      responses:
+        '201':
+          description: Pedido criado, estoque reduzido e carrinho esvaziado
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Order' }
+        '400': { description: Carrinho vazio ou endereço inválido }
+        '409': { description: Estoque insuficiente }
+    get:
+      tags: [Orders]
+      summary: Listar todos os pedidos (FUNCIONARIO/ADMIN, filtro por status)
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - { name: status, in: query, schema: { type: string, enum: [EM_SEPARACAO, ENVIADO, ENTREGUE, CANCELADO] } }
+      responses:
+        '200':
+          description: Lista de pedidos
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Order' }
+
+  /orders/me:
+    get:
+      tags: [Orders]
+      summary: Histórico dos meus pedidos
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200':
+          description: Lista de pedidos do usuário logado
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Order' }
+
+  /orders/me/{id}:
+    get:
+      tags: [Orders]
+      summary: Detalhe de um pedido meu
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+      responses:
+        '200':
+          description: Pedido encontrado
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Order' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /orders/{id}:
+    get:
+      tags: [Orders]
+      summary: Detalhe de qualquer pedido (FUNCIONARIO/ADMIN)
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+      responses:
+        '200':
+          description: Pedido encontrado
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Order' }
+
+  /orders/{id}/status:
+    patch:
+      tags: [Orders]
+      summary: Atualizar status do pedido (FUNCIONARIO/ADMIN, sem retrocesso)
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [status]
+              properties:
+                status: { type: string, enum: [ENVIADO, ENTREGUE] }
+      responses:
+        '200':
+          description: Status atualizado
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Order' }
+        '400': { description: Transição de status inválida }
+
+  /orders/{id}/cancel:
+    patch:
+      tags: [Orders]
+      summary: Cancelar pedido (somente ADMIN, somente em EM_SEPARACAO)
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+      responses:
+        '200':
+          description: Pedido cancelado e estoque restituído
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Order' }
+        '400': { description: Pedido não está em separação }
+
+  /stock:
+    get:
+      tags: [Stock]
+      summary: Listar estoque de produtos (FUNCIONARIO/ADMIN, destaca estoque baixo)
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200': { description: Lista de produtos com estoque e flag lowStock }
+
+  /stock/{productId}/entry:
+    post:
+      tags: [Stock]
+      summary: Registrar entrada de estoque (FUNCIONARIO/ADMIN)
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - { name: productId, in: path, required: true, schema: { type: integer } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [quantity]
+              properties:
+                variantId: { type: integer }
+                quantity: { type: integer }
+                reason: { type: string }
+      responses:
+        '201': { description: Entrada registrada, estoque incrementado }
+
+  /stock/{productId}/exit:
+    post:
+      tags: [Stock]
+      summary: Registrar saída de estoque (FUNCIONARIO/ADMIN)
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - { name: productId, in: path, required: true, schema: { type: integer } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [quantity]
+              properties:
+                variantId: { type: integer }
+                quantity: { type: integer }
+                reason: { type: string, example: "Produto danificado" }
+      responses:
+        '201': { description: Saída registrada, estoque decrementado }
+        '409': { description: Estoque insuficiente }
+
+  /stock/movements:
+    get:
+      tags: [Stock]
+      summary: Histórico completo de movimentações (somente ADMIN)
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200': { description: Lista de movimentações de estoque }
+
+  /reports/mais-vendidos:
+    get:
+      tags: [Reports]
+      summary: Produtos mais vendidos (ADMIN)
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200': { description: Ranking de produtos por quantidade vendida }
+
+  /reports/estoque-critico:
+    get:
+      tags: [Reports]
+      summary: Produtos com estoque crítico (ADMIN)
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200': { description: Lista de produtos com estoque abaixo do mínimo }
+
+  /reports/faturamento:
+    get:
+      tags: [Reports]
+      summary: Faturamento por período (ADMIN)
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - { name: startDate, in: query, schema: { type: string, format: date } }
+        - { name: endDate, in: query, schema: { type: string, format: date } }
+      responses:
+        '200':
+          description: Total faturado e quantidade de pedidos concluídos
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  total: { type: number }
+                  orderCount: { type: integer }
+
+  /users:
+    get:
+      tags: [Users]
+      summary: Listar usuários (ADMIN)
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200':
+          description: Lista de usuários
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/User' }
+
+  /users/{id}/role:
+    patch:
+      tags: [Users]
+      summary: Alterar role de um usuário (ADMIN)
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [role]
+              properties:
+                role: { type: string, enum: [CLIENTE, FUNCIONARIO, ADMIN] }
+      responses:
+        '200':
+          description: Role atualizada
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/User' }
+
+  /users/{id}/status:
+    patch:
+      tags: [Users]
+      summary: Bloquear/desativar usuário (ADMIN)
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [active]
+              properties:
+                active: { type: boolean }
+      responses:
+        '200':
+          description: Status atualizado
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/User' }
