@@ -47,13 +47,16 @@ button {
   align-items: center;
   justify-content: center;
   gap: var(--space-2);
-  padding: var(--space-2) var(--space-4);
-  border-radius: var(--radius-md);
+  padding: var(--space-3) var(--space-5);
+  border-radius: var(--radius-sm);
   border: 1px solid transparent;
-  font-weight: 600;
+  font-weight: 700;
+  font-size: var(--font-size-sm);
   transition:
     background-color 0.15s ease,
-    border-color 0.15s ease;
+    border-color 0.15s ease,
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
 }
 
 .btn-primary {
@@ -63,6 +66,8 @@ button {
 
 .btn-primary:hover {
   background: var(--color-primary-dark);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
 }
 
 .btn-secondary {
@@ -73,11 +78,14 @@ button {
 
 .btn-secondary:hover {
   border-color: var(--color-primary);
+  color: var(--color-primary);
 }
 
 .btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
 }
 
 .card {
@@ -85,6 +93,7 @@ button {
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-sm);
+  transition: box-shadow 0.2s ease;
 }
 
 .field {
@@ -103,18 +112,26 @@ button {
 .field input,
 .field select,
 .field textarea {
-  padding: var(--space-2) var(--space-3);
+  height: 44px;
+  padding: 0 var(--space-3);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-sm);
   background: var(--color-surface);
   color: var(--color-text);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.field textarea {
+  height: auto;
+  padding: var(--space-3);
 }
 
 .field input:focus,
 .field select:focus,
 .field textarea:focus {
-  outline: 2px solid var(--color-primary);
-  outline-offset: 1px;
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(201, 32, 113, 0.15);
 }
 
 .error-text {
@@ -124,16 +141,17 @@ button {
 
 .status-badge {
   display: inline-block;
-  padding: var(--space-1) var(--space-2);
-  border-radius: var(--radius-sm);
+  padding: var(--space-1) var(--space-3);
+  border-radius: 999px;
   font-size: var(--font-size-xs);
   font-weight: 700;
   text-transform: uppercase;
+  letter-spacing: 0.02em;
 }
 
 .status-EM_SEPARACAO {
   background: #fdf1dc;
-  color: var(--color-warning);
+  color: #b8790a;
 }
 
 .status-ENVIADO {
@@ -142,11 +160,11 @@ button {
 }
 
 .status-ENTREGUE {
-  background: #e3f6e9;
-  color: var(--color-success);
+  background: #e3f9ea;
+  color: #1e9a4b;
 }
 
 .status-CANCELADO {
-  background: #fbe4e4;
+  background: #fde4ea;
   color: var(--color-danger);
 }
