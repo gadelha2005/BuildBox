@@ -128,3 +128,19 @@ export interface ProductFilters {
   page?: number;
   pageSize?: number;
 }
+
+export interface EstoqueVariante {
+  id: number;
+  tamanho: string | null;
+  cor: string | null;
+  estoque: number;
+}
+
+export interface EstoqueItem {
+  id: number;
+  nome: string;
+  estoque: number;
+  estoqueMinimo: number;
+  estoqueBaixo: boolean;
+  variantes: EstoqueVariante[];
+}
