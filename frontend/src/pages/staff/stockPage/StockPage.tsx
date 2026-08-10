@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import type { FormEvent } from "react";
-import * as stockApi from '../../api/stock';
-import type { EstoqueItem } from "../../types";
+import * as stockApi from "../../../api/stock";
+import type { EstoqueItem } from "../../../types";
 import "./StockPage.css";
 
 export function StockPage() {
@@ -54,20 +54,29 @@ export function StockPage() {
     try {
       const vId = variantId === "" ? undefined : Number(variantId);
       if (tipo === "ENTRADA") {
-        await stockApi.registerEntry(item.id, quantidade, motivo || undefined, vId);
+        await stockApi.registerEntry(
+          item.id,
+          quantidade,
+          motivo || undefined,
+          vId,
+        );
       } else {
-        await stockApi.registerExit(item.id, quantidade, motivo || undefined, vId);
+        await stockApi.registerExit(
+          item.id,
+          quantidade,
+          motivo || undefined,
+          vId,
+        );
       }
 
       fecharMovimentacao();
       carregar();
-    } 
-    catch (err: any) {
+    } catch (err: any) {
       setError(
-        err?.response?.data?.message ?? "Não foi possível registrar a movimentação.",
+        err?.response?.data?.message ??
+          "Não foi possível registrar a movimentação.",
       );
-    } 
-    finally {
+    } finally {
       setSalvando(false);
     }
   }
@@ -95,7 +104,9 @@ export function StockPage() {
               <span>{item.estoqueMinimo}</span>
               <span>
                 {item.estoqueBaixo ? (
-                  <span className="stock-badge stock-badge--low">Estoque baixo</span>
+                  <span className="stock-badge stock-badge--low">
+                    Estoque baixo
+                  </span>
                 ) : (
                   <span className="stock-badge stock-badge--ok">OK</span>
                 )}
@@ -117,8 +128,8 @@ export function StockPage() {
               <div className="stock-table__variants">
                 {item.variantes.map((v) => (
                   <span key={v.id} className="stock-variant-chip">
-                    {[v.tamanho, v.cor].filter(Boolean).join(" / ") || "Padrão"}:{" "}
-                    {v.estoque}
+                    {[v.tamanho, v.cor].filter(Boolean).join(" / ") || "Padrão"}
+                    : {v.estoque}
                   </span>
                 ))}
               </div>
@@ -133,7 +144,9 @@ export function StockPage() {
                   <label>Tipo</label>
                   <select
                     value={tipo}
-                    onChange={(e) => setTipo(e.target.value as "ENTRADA" | "SAIDA")}
+                    onChange={(e) =>
+                      setTipo(e.target.value as "ENTRADA" | "SAIDA")
+                    }
                   >
                     <option value="ENTRADA">Entrada</option>
                     <option value="SAIDA">Saída</option>
@@ -146,13 +159,16 @@ export function StockPage() {
                     <select
                       value={variantId}
                       onChange={(e) =>
-                        setVariantId(e.target.value ? Number(e.target.value) : "")
+                        setVariantId(
+                          e.target.value ? Number(e.target.value) : "",
+                        )
                       }
                     >
                       <option value="">Selecione</option>
                       {item.variantes.map((v) => (
                         <option key={v.id} value={v.id}>
-                          {[v.tamanho, v.cor].filter(Boolean).join(" / ") || "Padrão"}
+                          {[v.tamanho, v.cor].filter(Boolean).join(" / ") ||
+                            "Padrão"}
                         </option>
                       ))}
                     </select>
@@ -179,7 +195,11 @@ export function StockPage() {
 
                 {error && <p className="error-text">{error}</p>}
 
-                <button className="btn btn-primary" type="submit" disabled={salvando}>
+                <button
+                  className="btn btn-primary"
+                  type="submit"
+                  disabled={salvando}
+                >
                   {salvando ? "Salvando..." : "Confirmar movimentação"}
                 </button>
               </form>
