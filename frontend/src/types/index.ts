@@ -5,7 +5,7 @@ export interface Usuario {
   nome: string;
   email: string;
   role: RoleUsuario;
-  ativo: boolean;
+  ativo?: boolean;
 }
 
 export interface Categoria {

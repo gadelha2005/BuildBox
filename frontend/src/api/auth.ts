@@ -6,11 +6,18 @@ export interface AuthResponse {
   user: Usuario;
 }
 
+export interface RegisterResponse {
+  id: number;
+  nome: string;
+  email: string;
+  role: RoleUsuario;
+}
+
 export async function register(nome: string, email: string, senha: string) {
-  const { data } = await http.post<AuthResponse>("/auth/register", {
-    nome,
+  const { data } = await http.post<RegisterResponse>("/auth/register", {
+    name: nome,
     email,
-    senha,
+    password: senha,
   });
   return data;
 }
@@ -18,7 +25,7 @@ export async function register(nome: string, email: string, senha: string) {
 export async function login(email: string, senha: string) {
   const { data } = await http.post<AuthResponse>("/auth/login", {
     email,
-    senha,
+    password: senha,
   });
   return data;
 }
