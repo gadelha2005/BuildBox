@@ -1,9 +1,9 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import type { MouseEvent } from "react";
-import type { Produto } from "../types";
-import { useAuth } from "../contexts/AuthContext";
-import { useCart } from "../contexts/CartContext";
+import type { Produto } from "../../types";
+import { useAuth } from "../../contexts/AuthContext";
+import { useCart } from "../../contexts/CartContext";
 import "./ProductCard.css";
 
 const currency = new Intl.NumberFormat("pt-BR", {

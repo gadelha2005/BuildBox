@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import * as productsApi from "../../../api/products";
 import * as categoriesApi from "../../../api/categories";
-import { ProductCard } from "../../../components/ProductCard";
-import { Section } from "../../../components/Section";
+import { ProductCard } from "../../../components/productCard/ProductCard";
+import { Section } from "../../../components/section/Section";
 import type { Categoria, Produto } from "../../../types";
 
 export function HomePage() {

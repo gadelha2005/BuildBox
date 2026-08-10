@@ -1,14 +1,14 @@
-import { useState } from 'react';
-import type { FormEvent } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
-import { useCart } from '../contexts/CartContext';
-import './Header.css';
+import { useState } from "react";
+import type { FormEvent } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../../contexts/AuthContext";
+import { useCart } from "../../contexts/CartContext";
+import "./Header.css";
 
 export function Header() {
   const { user, isAuthenticated, logout } = useAuth();
   const { items } = useCart();
-  const [term, setTerm] = useState('');
+  const [term, setTerm] = useState("");
   const navigate = useNavigate();
 
   function handleSearch(event: FormEvent) {
@@ -25,8 +25,12 @@ export function Header() {
 
         <nav className="header__nav">
           <Link to="/produtos">Produtos</Link>
-          {user?.role === 'FUNCIONARIO' && <Link to="/painel-funcionario">Painel</Link>}
-          {user?.role === 'ADMIN' && <Link to="/painel-admin">Painel Admin</Link>}
+          {user?.role === "FUNCIONARIO" && (
+            <Link to="/painel-funcionario">Painel</Link>
+          )}
+          {user?.role === "ADMIN" && (
+            <Link to="/painel-admin">Painel Admin</Link>
+          )}
         </nav>
 
         <form className="header__search" onSubmit={handleSearch}>

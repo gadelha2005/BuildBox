@@ -3,7 +3,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import * as productsApi from "../../../api/products";
 import * as categoriesApi from "../../../api/categories";
 import * as brandsApi from "../../../api/brands";
-import { ProductCard } from "../../../components/ProductCard";
+import { ProductCard } from "../../../components/productCard/ProductCard";
 import type { Categoria, Marca, Produto } from "../../../types";
 import "./ProductListPage.css";
 
