@@ -42,7 +42,7 @@ export async function login(email: string, password: string){
 
     return{token, user:{
         id: user.id,
-        name: user.nome,
+        nome: user.nome,
         email: user.email,
         role: user.role
     }};
