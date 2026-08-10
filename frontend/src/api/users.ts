@@ -12,6 +12,6 @@ export async function updateRole(id: number, role: RoleUsuario) {
 }
 
 export async function updateStatus(id: number, ativo: boolean) {
-  const { data } = await http.patch<Usuario>(`/users/${id}/status`, { ativo });
+  const { data } = await http.patch<Usuario>(`/users/${id}/status`, { active: ativo });
   return data;
 }
