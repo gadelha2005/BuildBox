@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import * as productsApi from "../../../api/products";
 import * as categoriesApi from "../../../api/categories";
 import * as brandsApi from "../../../api/brands";
@@ -8,6 +8,7 @@ import type { Categoria, Marca, Produto } from "../../../types";
 import "./ProductListPage.css";
 
 export function ProductListPage() {
+  const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const [produtos, setProdutos] = useState<Produto[]>([]);
   const [total, setTotal] = useState(0);
@@ -61,6 +62,15 @@ export function ProductListPage() {
 
   return (
     <div className="product-list">
+      <button
+        type="button"
+        className="product-list__back"
+        onClick={() => navigate(-1)}
+      >
+        &larr; Voltar
+      </button>
+
+      <div className="product-list__content">
       <aside className="product-list__filters card">
         <h2>Filtros</h2>
 
@@ -140,6 +150,7 @@ export function ProductListPage() {
         {!loading && produtos.length === 0 && (
           <p>Nenhum produto encontrado com os filtros selecionados.</p>
         )}
+      </div>
       </div>
     </div>
   );
