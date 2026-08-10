@@ -1,0 +1,19 @@
+.order-history {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.order-history__item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-4);
+  gap: var(--space-4);
+}
+
+.order-history__date {
+  display: block;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
