@@ -1,9 +1,36 @@
 import { http } from "./http";
-import type { ItemCarrinho } from "../types";
+import type { ItemCarrinho, Produto, VariacaoProduto } from "../types";
+
+interface CartItemResponse {
+  id: number;
+  userId: number;
+  productId: number;
+  variantProductId: number | null;
+  quantity: number;
+  createdAt: string;
+  product?: Produto;
+  variant?: VariacaoProduto | null;
+}
+
+interface CartResponse {
+  items: CartItemResponse[];
+  total: number;
+}
+
+function toItemCarrinho(item: CartItemResponse): ItemCarrinho {
+  return {
+    id: item.id,
+    produtoId: item.productId,
+    variacaoProdutoId: item.variantProductId,
+    quantidade: item.quantity,
+    produto: item.product as Produto,
+    variacaoProduto: item.variant,
+  };
+}
 
 export async function findMine() {
-  const { data } = await http.get<ItemCarrinho[]>("/cart");
-  return data;
+  const { data } = await http.get<CartResponse>("/cart");
+  return data.items.map(toItemCarrinho);
 }
 
 export async function add(
@@ -11,19 +38,19 @@ export async function add(
   quantidade: number,
   variacaoProdutoId?: number,
 ) {
-  const { data } = await http.post<ItemCarrinho>("/cart", {
-    produtoId,
-    quantidade,
-    variacaoProdutoId,
+  const { data } = await http.post<CartItemResponse>("/cart", {
+    productId: produtoId,
+    quantity: quantidade,
+    variantId: variacaoProdutoId,
   });
-  return data;
+  return toItemCarrinho(data);
 }
 
 export async function updateQuantity(id: number, quantidade: number) {
-  const { data } = await http.patch<ItemCarrinho>(`/cart/${id}`, {
-    quantidade,
+  const { data } = await http.patch<CartItemResponse>(`/cart/${id}`, {
+    quantity: quantidade,
   });
-  return data;
+  return toItemCarrinho(data);
 }
 
 export async function remove(id: number) {
