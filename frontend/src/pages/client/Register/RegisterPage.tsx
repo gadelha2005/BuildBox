@@ -1,8 +1,8 @@
 import { useState } from "react";
 import type { FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../../contexts/AuthContext";
-import "./AuthPages.css";
+import { useAuth } from "../../../contexts/AuthContext";
+import "./RegisterPage.css";
 
 export function RegisterPage() {
   const { register } = useAuth();

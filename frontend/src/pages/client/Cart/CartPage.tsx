@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
-import { useCart } from "../../contexts/CartContext";
+import { useCart } from "../../../contexts/CartContext";
 import "./CartPage.css";
 
 const currency = new Intl.NumberFormat("pt-BR", {

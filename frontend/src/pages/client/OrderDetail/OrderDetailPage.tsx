@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import * as ordersApi from "../../api/orders";
-import type { Pedido } from "../../types";
-import { StatusBadge } from "../../components/StatusBadge";
+import * as ordersApi from "../../../api/orders";
+import type { Pedido } from "../../../types";
+import { StatusBadge } from "../../../components/StatusBadge";
 import "./OrderDetailPage.css";
 
 const currency = new Intl.NumberFormat("pt-BR", {

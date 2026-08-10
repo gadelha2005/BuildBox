@@ -1,8 +1,8 @@
 import { useState } from "react";
 import type { FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
-import * as ordersApi from "../../api/orders";
-import { useCart } from "../../contexts/CartContext";
+import * as ordersApi from "../../../api/orders";
+import { useCart } from "../../../contexts/CartContext";
 import "./CheckoutPage.css";
 
 const currency = new Intl.NumberFormat("pt-BR", {

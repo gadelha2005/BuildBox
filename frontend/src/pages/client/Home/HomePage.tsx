@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import * as productsApi from "../../api/products";
-import * as categoriesApi from "../../api/categories";
-import { ProductCard } from "../../components/ProductCard";
-import { Section } from "../../components/Section";
-import type { Categoria, Produto } from "../../types";
+import * as productsApi from "../../../api/products";
+import * as categoriesApi from "../../../api/categories";
+import { ProductCard } from "../../../components/ProductCard";
+import { Section } from "../../../components/Section";
+import type { Categoria, Produto } from "../../../types";
 
 export function HomePage() {
   const [destaques, setDestaques] = useState<Produto[]>([]);

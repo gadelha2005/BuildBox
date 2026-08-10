@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import * as productsApi from "../../api/products";
-import { useAuth } from "../../contexts/AuthContext";
-import { useCart } from "../../contexts/CartContext";
-import type { Produto, VariacaoProduto } from "../../types";
+import * as productsApi from "../../../api/products";
+import { useAuth } from "../../../contexts/AuthContext";
+import { useCart } from "../../../contexts/CartContext";
+import type { Produto, VariacaoProduto } from "../../../types";
 import "./ProductDetailPage.css";
 
 const currency = new Intl.NumberFormat("pt-BR", {
