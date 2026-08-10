@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import * as ordersApi from "../../../api/orders";
 import { useCart } from "../../../contexts/CartContext";
 import "./CheckoutPage.css";
+import * as addressesApi from "../../../api/addresses";
 
 const currency = new Intl.NumberFormat("pt-BR", {
   style: "currency",
@@ -32,14 +33,15 @@ export function CheckoutPage() {
     setError("");
     setLoading(true);
     try {
-      const pedido = await ordersApi.checkout({
+      const endereco = await addressesApi.create({
         rua,
         numero,
-        complemento,
+        complemento: complemento || undefined,
         cidade,
         estado,
         cep,
       });
+      const pedido = await ordersApi.checkout({ addressId: endereco.id });
       await refresh();
       navigate(`/pedidos/${pedido.id}`, { replace: true });
     } catch (err: any) {

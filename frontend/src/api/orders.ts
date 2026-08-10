@@ -2,13 +2,7 @@ import { http } from "./http";
 import type { Pedido, StatusPedido } from "../types";
 
 export interface CheckoutPayload {
-  enderecoId?: number;
-  rua: string;
-  numero: string;
-  complemento?: string;
-  cidade: string;
-  estado: string;
-  cep: string;
+  addressId: number;
 }
 
 export async function checkout(payload: CheckoutPayload) {
