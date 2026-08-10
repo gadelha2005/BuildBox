@@ -12,6 +12,8 @@ import { OrderHistoryPage } from "./pages/client/OrderHistory/OrderHistoryPage";
 import { OrderDetailPage } from "./pages/client/OrderDetail/OrderDetailPage";
 import { LoginPage } from "./pages/client/Login/LoginPage";
 import { RegisterPage } from "./pages/client/Register/RegisterPage";
+import { StaffLayout} from "./components/staffLayout/StaffLayout";
+import { StockPage } from "./pages/staff/StockPage";
 
 function App() {
   return (
@@ -87,6 +89,18 @@ function App() {
                 </ProtectedRoute>
               }
             />
+
+              <Route
+                path="/painel-funcionario"
+                element={
+                  <ProtectedRoute roles={["FUNCIONARIO", "ADMIN"]}>
+                    <StaffLayout />
+                  </ProtectedRoute>
+                }
+              >
+                <Route index element={<Navigate to="estoque" replace />} />
+                <Route path="estoque" element={<StockPage />} />
+            </Route>
 
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
