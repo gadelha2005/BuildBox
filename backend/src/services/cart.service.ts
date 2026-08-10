@@ -86,7 +86,10 @@ export async function add(data: AddToCartInput): Promise<CartItem> {
 export async function findByUser(userId: number) {
   const items = await prisma.itemCarrinho.findMany({
     where: { usuarioId: userId },
-    include: { produto: true, variacaoProduto: true },
+    include: {
+      produto: { include: { fotos: { orderBy: { ordem: 'asc' } } } },
+      variacaoProduto: true,
+    },
   });
 
   const total = items.reduce((sum, item) => {
