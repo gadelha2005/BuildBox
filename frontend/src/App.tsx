@@ -3,15 +3,15 @@ import { AuthProvider } from "./contexts/AuthContext";
 import { CartProvider } from "./contexts/CartContext";
 import { Layout } from "./components/Layout";
 import { ProtectedRoute } from "./components/ProtectedRoute";
-import { HomePage } from "./pages/client/HomePage";
-import { ProductListPage } from "./pages/client/ProductListPage";
-import { ProductDetailPage } from "./pages/client/ProductDetailPage";
-import { CartPage } from "./pages/client/CartPage";
-import { CheckoutPage } from "./pages/client/CheckoutPage";
-import { OrderHistoryPage } from "./pages/client/OrderHistoryPage";
-import { OrderDetailPage } from "./pages/client/OrderDetailPage";
-import { LoginPage } from "./pages/client/LoginPage";
-import { RegisterPage } from "./pages/client/RegisterPage";
+import { HomePage } from "./pages/client/Home/HomePage";
+import { ProductListPage } from "./pages/client/ProductList/ProductListPage";
+import { ProductDetailPage } from "./pages/client/ProductDetail/ProductDetailPage";
+import { CartPage } from "./pages/client/Cart/CartPage";
+import { CheckoutPage } from "./pages/client/Checkout/CheckoutPage";
+import { OrderHistoryPage } from "./pages/client/OrderHistory/OrderHistoryPage";
+import { OrderDetailPage } from "./pages/client/OrderDetail/OrderDetailPage";
+import { LoginPage } from "./pages/client/Login/LoginPage";
+import { RegisterPage } from "./pages/client/Register/RegisterPage";
 
 function App() {
   return (
