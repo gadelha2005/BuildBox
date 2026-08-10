@@ -61,6 +61,9 @@ export async function findAll(filters: FindAllFilters) {
       orderBy,
       skip: (page - 1) * limit,
       take: limit,
+      include: {
+        fotos: { orderBy: { ordem: 'asc' } },
+      },
     }),
     prisma.produto.count({ where }),
   ]);
