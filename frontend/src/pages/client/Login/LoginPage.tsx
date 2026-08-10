@@ -18,9 +18,11 @@ export function LoginPage() {
     setError("");
     setLoading(true);
     try {
-      await login(email, senha);
-      const from = (location.state as { from?: string } | null)?.from ?? "/";
-      navigate(from, { replace: true });
+      const usuario = await login(email, senha);
+      const from = (location.state as { from?: string } | null)?.from;
+      const destino =
+        from ?? (usuario.role === "FUNCIONARIO" ? "/painel-funcionario/estoque" : "/");
+      navigate(destino, { replace: true });
     } catch (err: any) {
       setError(
         err?.response?.data?.message ?? "E-mail ou senha inválidos.",
