@@ -55,11 +55,25 @@ export async function update(request: Request, response: Response, next: NextFun
     return response.status(200).json(product);
 }
 
-export async function deactivate(request: Request, response: Response) {
+export async function deactivate(request: Request, response: Response , next: NextFunction) {
   const id = Number(request.params.id);
   const product = await productService.deactivate(id);
 
   return response.status(200).json(product);
+}
+
+export async function activate(request: Request, response: Response , next: NextFunction) {
+  const id = Number(request.params.id);
+  const product = await productService.activate(id);
+
+  return response.status(200).json(product);
+}
+
+export async function findAllAdmin(request: Request, response: Response , next: NextFunction) {
+  const filters = findAllQuerySchema.parse(request.query);
+  const result = await productService.findAll({ ...filters, includeInactive: true });
+
+  return response.status(200).json(result);
 }
 
 export async function remove(request: Request, response: Response, next: NextFunction){

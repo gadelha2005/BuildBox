@@ -36,7 +36,7 @@ export async function findAll(filters: FindAllFilters) {
   const limit = filters.limit ?? 10;
 
   const where: Prisma.ProdutoWhereInput = {
-    ativo: true,
+    ...(!filters.includeInactive && { ativo: true }),
     ...(filters.search && { nome: { contains: filters.search } }),
     ...(filters.categoryId && { categoriaId: filters.categoryId }),
     ...(filters.brandId && { marcaId: filters.brandId }),
@@ -117,6 +117,16 @@ export async function deactivate(id: number): Promise<Product>{
     }
 
     return prisma.produto.update({where: {id}, data: {ativo: false}});
+}
+
+export async function activate(id: number): Promise<Product>{
+    const product = await prisma.produto.findUnique({where: {id}});
+
+    if(!product){
+        throw new AppError('Produto não encontrado' , 404);
+    }
+
+    return prisma.produto.update({where: {id}, data: {ativo: true}});
 }
 
 export async function remove(id: number): Promise<Product>{

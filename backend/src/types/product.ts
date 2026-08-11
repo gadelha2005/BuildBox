@@ -46,6 +46,7 @@ export interface FindAllFilters {
   sort?: 'price_asc' | 'price_desc';
   page?: number;
   limit?: number;
+  includeInactive?: boolean;
 }
 
 export interface ProductPhoto {
