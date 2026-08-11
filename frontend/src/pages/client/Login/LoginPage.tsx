@@ -18,10 +18,14 @@ export function LoginPage() {
     setError("");
     setLoading(true);
     try {
-      const usuario = await login(email, senha);
-      const from = (location.state as { from?: string } | null)?.from;
-      const destino =
-        from ?? (usuario.role === "FUNCIONARIO" ? "/painel-funcionario/estoque" : "/");
+
+        const usuario = await login(email, senha);
+        const from = (location.state as { from?: string } | null)?.from;
+        const destinoPorRole: Record<string, string> = {
+          FUNCIONARIO: "/painel-funcionario/estoque",
+          ADMIN: "/painel-admin/produtos",
+      };
+      const destino = from ?? destinoPorRole[usuario.role] ?? "/";
       navigate(destino, { replace: true });
     } catch (err: any) {
       setError(
