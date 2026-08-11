@@ -3,7 +3,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import * as productsApi from "../../../api/products";
 import * as categoriesApi from "../../../api/categories";
 import * as brandsApi from "../../../api/brands";
-import { ProductCard } from "../../../components/productCard/ProductCard";
+import { ProductListing } from "../../../components/productListing/ProductListing";
 import type { Categoria, Marca, Produto } from "../../../types";
 import "./ProductListPage.css";
 
@@ -142,11 +142,7 @@ export function ProductListPage() {
         <p className="product-list__total">
           {loading ? "Buscando..." : `${total} produto(s) encontrado(s)`}
         </p>
-        <div className="product-grid">
-          {produtos.map((produto) => (
-            <ProductCard key={produto.id} produto={produto} />
-          ))}
-        </div>
+        <ProductListing produtos={produtos} />
         {!loading && produtos.length === 0 && (
           <p>Nenhum produto encontrado com os filtros selecionados.</p>
         )}

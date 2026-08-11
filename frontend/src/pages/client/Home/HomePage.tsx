@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import * as productsApi from "../../../api/products";
 import * as categoriesApi from "../../../api/categories";
-import { ProductCard } from "../../../components/productCard/ProductCard";
+import { ProductListing } from "../../../components/productListing/ProductListing";
 import { Section } from "../../../components/section/Section";
 import type { Categoria, Produto } from "../../../types";
 
@@ -45,15 +45,7 @@ export function HomePage() {
       </Section>
 
       <Section title="Produtos em destaque">
-        {loading ? (
-          <p>Carregando...</p>
-        ) : (
-          <div className="product-grid">
-            {destaques.map((produto) => (
-              <ProductCard key={produto.id} produto={produto} />
-            ))}
-          </div>
-        )}
+        {loading ? <p>Carregando...</p> : <ProductListing produtos={destaques} />}
       </Section>
     </div>
   );
