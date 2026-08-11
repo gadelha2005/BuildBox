@@ -19,6 +19,7 @@ import { AdminLayout } from "./components/adminLayout/AdminLayout";
 import { AdminProductsPage } from "./pages/admin/products/AdminProductsPage";
 import { AdminCategoriesPage } from "./pages/admin/categoriesAndBrands/AdminCategoriesPage";
 import { AdminUsersPage } from "./pages/admin/users/AdminUsersPage";
+import { AdminReportsPage } from "./pages/admin/reports/AdminReportsPage";
 
 function App() {
   return (
@@ -109,6 +110,7 @@ function App() {
                 <Route path="estoque" element={<StockPage />} />
                 <Route path="pedidos" element={<OrdersPage />} />
                 <Route path="usuarios" element={<AdminUsersPage />} />
+                <Route path="relatorios" element={<AdminReportsPage />} />
             </Route>
 
             <Route
