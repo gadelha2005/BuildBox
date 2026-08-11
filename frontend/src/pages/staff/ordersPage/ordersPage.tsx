@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import * as ordersApi from "../../../api/orders";
 import { StatusBadge } from "../../../components/StatusBadge";
 import type { Pedido, StatusPedido } from "../../../types";
-import "./OrdersPage.css";
+import "./ordersPage.css";
 import { useAuth } from "../../../contexts/AuthContext";
 
 const currency = new Intl.NumberFormat("pt-BR", {
