@@ -3,6 +3,7 @@ import * as ordersApi from "../../../api/orders";
 import { StatusBadge } from "../../../components/StatusBadge";
 import type { Pedido, StatusPedido } from "../../../types";
 import "./OrdersPage.css";
+import { useAuth } from "../../../contexts/AuthContext";
 
 const currency = new Intl.NumberFormat("pt-BR", {
   style: "currency",
@@ -36,6 +37,8 @@ export function OrdersPage() {
   const [atualizandoId, setAtualizandoId] = useState<number | null>(null);
   const [error, setError] = useState("");
 
+  const { user } = useAuth();
+
   function carregar() {
     setLoading(true);
     ordersApi
@@ -60,6 +63,22 @@ export function OrdersPage() {
     } catch (err: any) {
       setError(
         err?.response?.data?.message ?? "Não foi possível atualizar o status.",
+      );
+    } finally {
+      setAtualizandoId(null);
+    }
+  }
+  async function handleCancelar(pedido: Pedido) {
+    if (!confirm(`Cancelar o pedido #${pedido.id}?`)) return;
+
+    setError("");
+    setAtualizandoId(pedido.id);
+    try {
+      await ordersApi.cancel(pedido.id);
+      carregar();
+    } catch (err: any) {
+      setError(
+        err?.response?.data?.message ?? "Não foi possível cancelar o pedido.",
       );
     } finally {
       setAtualizandoId(null);
@@ -113,7 +132,7 @@ export function OrdersPage() {
                 <span>
                   <StatusBadge status={pedido.status} />
                 </span>
-                <span>
+                <span className="orders-table__actions">
                   {proximo && (
                     <button
                       type="button"
@@ -121,9 +140,19 @@ export function OrdersPage() {
                       disabled={atualizandoId === pedido.id}
                       onClick={() => handleAvancarStatus(pedido)}
                     >
-                        {atualizandoId === pedido.id
-                            ? "Atualizando..."
-                            : PROXIMO_STATUS_LABEL[proximo]}
+                      {atualizandoId === pedido.id
+                        ? "Atualizando..."
+                        : PROXIMO_STATUS_LABEL[proximo]}
+                    </button>
+                  )}
+                  {user?.role === "ADMIN" && pedido.status === "EM_SEPARACAO" && (
+                    <button
+                      type="button"
+                      className="address-card__action address-card__action--danger"
+                      disabled={atualizandoId === pedido.id}
+                      onClick={() => handleCancelar(pedido)}
+                    >
+                      Cancelar
                     </button>
                   )}
                 </span>

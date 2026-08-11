@@ -42,3 +42,8 @@
     gap: var(--space-1);
   }
 }
+
+.orders-table__actions {
+  display: flex;
+  gap: var(--space-2);
+}
