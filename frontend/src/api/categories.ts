@@ -7,12 +7,12 @@ export async function findAll() {
 }
 
 export async function create(nome: string) {
-  const { data } = await http.post<Categoria>("/categories", { nome });
+  const { data } = await http.post<Categoria>("/categories", { name: nome });
   return data;
 }
 
 export async function update(id: number, nome: string) {
-  const { data } = await http.put<Categoria>(`/categories/${id}`, { nome });
+  const { data } = await http.put<Categoria>(`/categories/${id}`, { name: nome });
   return data;
 }
 
