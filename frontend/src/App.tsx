@@ -18,6 +18,7 @@ import { OrdersPage } from "./pages/staff/ordersPage/ordersPage";
 import { AdminLayout } from "./components/adminLayout/AdminLayout";
 import { AdminProductsPage } from "./pages/admin/products/AdminProductsPage";
 import { AdminCategoriesPage } from "./pages/admin/categoriesAndBrands/AdminCategoriesPage";
+import { AdminUsersPage } from "./pages/admin/users/AdminUsersPage";
 
 function App() {
   return (
@@ -107,6 +108,7 @@ function App() {
                 <Route path="categorias-marcas" element={<AdminCategoriesPage />} />
                 <Route path="estoque" element={<StockPage />} />
                 <Route path="pedidos" element={<OrdersPage />} />
+                <Route path="usuarios" element={<AdminUsersPage />} />
             </Route>
 
             <Route
