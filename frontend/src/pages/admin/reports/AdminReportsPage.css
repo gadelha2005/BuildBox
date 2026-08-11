@@ -1,0 +1,71 @@
+.admin-reports h1 {
+  margin-bottom: var(--space-5);
+}
+
+.admin-reports__block {
+  padding: var(--space-5);
+  margin-bottom: var(--space-5);
+}
+
+.admin-reports__filter {
+  display: flex;
+  gap: var(--space-3);
+  align-items: flex-end;
+  margin-bottom: var(--space-4);
+}
+
+.admin-reports__filter .field {
+  margin-bottom: 0;
+}
+
+.admin-reports__revenue {
+  display: flex;
+  gap: var(--space-6);
+}
+
+.admin-reports__revenue strong {
+  display: block;
+  font-size: var(--font-size-xl);
+}
+
+.admin-reports__revenue-label {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+.admin-reports__hint {
+  margin-top: var(--space-3);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
+
+.admin-reports__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-5);
+}
+
+.admin-reports__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.admin-reports__row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-2) 0;
+  border-bottom: 1px solid var(--color-border);
+  font-size: var(--font-size-sm);
+}
+
+.admin-reports__row:last-child {
+  border-bottom: none;
+}
+
+@media (max-width: 900px) {
+  .admin-reports__grid {
+    grid-template-columns: 1fr;
+  }
+}
