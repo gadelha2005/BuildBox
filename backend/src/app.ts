@@ -30,7 +30,7 @@ const openapiDocument = parse(
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(openapiDocument));
 
 app.use(express.json());
-app.use(cors());
+app.use(cors({ origin: process.env.CORS_ORIGIN }));
 
 app.use('/auth' , authRoutes);
 app.use('/categories' , categoryRoutes);
