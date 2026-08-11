@@ -1,0 +1,15 @@
+.admin-users h1 {
+  margin-bottom: var(--space-5);
+}
+
+.admin-users__header,
+.admin-users__row {
+  grid-template-columns: 1.2fr 1.6fr 1fr 0.8fr auto;
+}
+
+.admin-users__row select {
+  height: 36px;
+  padding: 0 var(--space-2);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+}
