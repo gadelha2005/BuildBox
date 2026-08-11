@@ -416,6 +416,35 @@ paths:
               schema: { $ref: '#/components/schemas/Product' }
         '404': { description: Categoria ou marca não encontrada }
 
+  /products/admin:
+    get:
+      tags: [Products]
+      summary: Listar produtos incluindo inativos (ADMIN)
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - { name: search, in: query, schema: { type: string } }
+        - { name: categoryId, in: query, schema: { type: integer } }
+        - { name: brandId, in: query, schema: { type: integer } }
+        - { name: minPrice, in: query, schema: { type: number } }
+        - { name: maxPrice, in: query, schema: { type: number } }
+        - { name: sort, in: query, schema: { type: string, enum: [price_asc, price_desc] } }
+        - { name: page, in: query, schema: { type: integer, default: 1 } }
+        - { name: limit, in: query, schema: { type: integer, default: 10 } }
+      responses:
+        '200':
+          description: Lista paginada de produtos (ativos e inativos)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  products:
+                    type: array
+                    items: { $ref: '#/components/schemas/Product' }
+                  total: { type: integer }
+                  page: { type: integer }
+                  limit: { type: integer }
+
   /products/{id}:
     get:
       tags: [Products]
@@ -474,6 +503,20 @@ paths:
       responses:
         '200':
           description: Produto inativado
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Product' }
+
+  /products/{id}/activate:
+    patch:
+      tags: [Products]
+      summary: Reativar produto (ADMIN)
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+      responses:
+        '200':
+          description: Produto reativado
           content:
             application/json:
               schema: { $ref: '#/components/schemas/Product' }
