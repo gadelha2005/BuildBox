@@ -105,6 +105,8 @@ function App() {
                 <Route index element={<Navigate to="produtos" replace />} />
                 <Route path="produtos" element={<AdminProductsPage />} />
                 <Route path="categorias-marcas" element={<AdminCategoriesPage />} />
+                <Route path="estoque" element={<StockPage />} />
+                <Route path="pedidos" element={<OrdersPage />} />
             </Route>
 
             <Route
