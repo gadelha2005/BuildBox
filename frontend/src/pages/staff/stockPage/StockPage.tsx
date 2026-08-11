@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import type { FormEvent } from "react";
 import * as stockApi from "../../../api/stock";
-import type { EstoqueItem } from "../../../types";
+import type { EstoqueItem, MovimentacaoEstoque } from "../../../types";
 import "./StockPage.css";
+import { useAuth } from "../../../contexts/AuthContext";
+
 
 export function StockPage() {
   const [itens, setItens] = useState<EstoqueItem[]>([]);
@@ -15,6 +17,10 @@ export function StockPage() {
   const [motivo, setMotivo] = useState("");
   const [variantId, setVariantId] = useState<number | "">("");
   const [salvando, setSalvando] = useState(false);
+  const { user } = useAuth();
+  const [mostrarMovimentacoes, setMostrarMovimentacoes] = useState(false);
+  const [movimentacoes, setMovimentacoes] = useState<MovimentacaoEstoque[]>([]);
+  const [carregandoMovimentacoes, setCarregandoMovimentacoes] = useState(false);
 
   function carregar() {
     setLoading(true);
@@ -39,6 +45,20 @@ export function StockPage() {
 
   function fecharMovimentacao() {
     setProdutoAbertoId(null);
+  }
+
+  function toggleMovimentacoes() {
+    if (mostrarMovimentacoes) {
+      setMostrarMovimentacoes(false);
+      return;
+    }
+
+    setMostrarMovimentacoes(true);
+    setCarregandoMovimentacoes(true);
+    stockApi
+      .listMovements()
+      .then(setMovimentacoes)
+      .finally(() => setCarregandoMovimentacoes(false));
   }
 
   async function handleSubmit(event: FormEvent, item: EstoqueItem) {
@@ -85,7 +105,42 @@ export function StockPage() {
 
   return (
     <div className="stock-page">
-      <h1>Estoque</h1>
+        <div className="stock-page__header">
+          <h1>Estoque</h1>
+            {user?.role === "ADMIN" && (
+            <button className="btn btn-secondary" onClick={toggleMovimentacoes}>
+              {mostrarMovimentacoes ? "Ocultar histórico" : "Ver histórico de movimentações"}
+            </button>
+          )}
+        </div>
+
+        {mostrarMovimentacoes && (
+          <div className="card stock-movements">
+            {carregandoMovimentacoes ? (
+              <p>Carregando histórico...</p>
+            ) : (
+              <>
+                <div className="stock-movements__header">
+                  <span>Produto</span>
+                  <span>Tipo</span>
+                  <span>Quantidade</span>
+                  <span>Motivo</span>
+                  <span>Data</span>
+                </div>
+                {movimentacoes.map((mov) => (
+                  <div key={mov.id} className="stock-movements__row">
+                    <span>{mov.produto?.nome ?? "-"}</span>
+                    <span>{mov.tipo === "ENTRADA" ? "Entrada" : "Saída"}</span>
+                    <span>{mov.quantidade}</span>
+                    <span>{mov.motivo ?? "-"}</span>
+                    <span>{new Date(mov.createdAt).toLocaleDateString("pt-BR")}</span>
+                  </div>
+                ))}
+                {movimentacoes.length === 0 && <p>Nenhuma movimentação registrada.</p>}
+              </>
+            )}
+        </div>
+      )}
 
       <div className="stock-table card">
         <div className="stock-table__header">

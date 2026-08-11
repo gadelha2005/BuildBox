@@ -90,3 +90,36 @@
     gap: var(--space-1);
   }
 }
+
+.stock-page__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-5);
+}
+
+.stock-movements {
+  padding: var(--space-4);
+  margin-bottom: var(--space-5);
+}
+
+.stock-movements__header,
+.stock-movements__row {
+  display: grid;
+  grid-template-columns: 1.5fr 0.8fr 0.8fr 1.5fr 1fr;
+  gap: var(--space-3);
+  padding: var(--space-2) 0;
+  border-bottom: 1px solid var(--color-border);
+  font-size: var(--font-size-sm);
+}
+
+.stock-movements__header {
+  font-size: var(--font-size-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-text-muted);
+}
+
+.stock-movements__row:last-child {
+  border-bottom: none;
+}
