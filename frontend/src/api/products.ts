@@ -31,6 +31,24 @@ export async function findAll(
   return { data: data.products, total: data.total };
 }
 
+export async function findAllAdmin(
+  filters: ProductFilters = {},
+): Promise<ProdutoListResponse> {
+  const { data } = await http.get<ProductsApiResponse>("/products/admin", {
+    params: {
+      search: filters.q,
+      categoryId: filters.categoriaId,
+      brandId: filters.marcaId,
+      minPrice: filters.precoMin,
+      maxPrice: filters.precoMax,
+      sort: filters.sort ? sortMap[filters.sort] : undefined,
+      page: filters.page,
+      limit: filters.pageSize,
+    },
+  });
+  return { data: data.products, total: data.total };
+}
+
 export async function findById(id: number) {
   const { data } = await http.get<Produto>(`/products/${id}`);
   return data;
@@ -72,6 +90,11 @@ export async function update(id: number, payload: Partial<ProductFormPayload>) {
 
 export async function deactivate(id: number) {
   const { data } = await http.patch(`/products/${id}/deactivate`);
+  return data;
+}
+
+export async function activate(id: number) {
+  const { data } = await http.patch(`/products/${id}/activate`);
   return data;
 }
 

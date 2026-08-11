@@ -15,7 +15,8 @@ import { RegisterPage } from "./pages/client/Register/RegisterPage";
 import { StaffLayout } from "./components/staffLayout/StaffLayout";
 import { StockPage } from "./pages/staff/stockPage/StockPage";
 import { OrdersPage } from "./pages/staff/ordersPage/ordersPage"; 
-
+import { AdminLayout } from "./components/adminLayout/AdminLayout";
+import { AdminProductsPage } from "./pages/admin/products/AdminProductsPage";
 
 function App() {
   return (
@@ -91,6 +92,18 @@ function App() {
                 </ProtectedRoute>
               }
             />
+
+              <Route
+                path="/painel-admin"
+                element={
+                  <ProtectedRoute roles={["ADMIN"]}>
+                    <AdminLayout />
+                  </ProtectedRoute>
+                }
+              >
+                <Route index element={<Navigate to="produtos" replace />} />
+                <Route path="produtos" element={<AdminProductsPage />} />
+            </Route>
 
             <Route
               path="/painel-funcionario"
